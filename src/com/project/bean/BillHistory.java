@@ -1,7 +1,13 @@
 package com.project.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class BillHistory {
+	@Id
 	private int billId;             //to store bill_id of the generated bill
+	@Id
 	private int productId;			//to store product_id of the products in the bill
 	private int quantity;			//to store the quantity of the product bought
 	private int discount;			//to store the discount given on the product

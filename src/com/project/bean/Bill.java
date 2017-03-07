@@ -2,8 +2,12 @@ package com.project.bean;
 
 import java.sql.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+@Entity
 public class Bill {
 	private int customerId;  //store customer_id to generate bill details
+	@Id
 	private int billId;      //to store bill_id
 	private Date billDate;   //to generate and store the date of bill creation
 

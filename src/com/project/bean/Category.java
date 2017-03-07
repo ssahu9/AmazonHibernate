@@ -1,7 +1,11 @@
 package com.project.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Category {
-	
+	@Id
 	private String CategoryName; 	//to store the name of the category
 	
 	//constructor made to be used for further processing

@@ -1,6 +1,11 @@
 package com.project.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Product {
+	@Id
 	private int productId;		//to store the product_id of the product
 	private String name;		//to store the name of the product
 	private String category;	//to store the name of the category to which the product belongs

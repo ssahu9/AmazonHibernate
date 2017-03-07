@@ -2,8 +2,13 @@ package com.project.bean;
 
 import java.sql.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+@Entity
 public class Cart {
+	@Id
 	private int customerId;		//to store the customer_id whose cart is being used
+	@Id
 	private int productId;		//to store the product_id of the product in the cart
 	private int quantity;		//to store the quantity of the product in the cart
 	private Date cartDate;		//to store the date on which cart was created 

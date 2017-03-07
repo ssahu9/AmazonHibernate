@@ -1,6 +1,13 @@
 package com.project.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="customer")
 public class Customer {
+	@Id
 	private int customerId;			//to store the customer_id (auto-generated)
 	private String firstName;		//to store the first name of the customer
 	private String lastName;		//to store the last name of the customer

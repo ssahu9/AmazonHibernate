@@ -11,7 +11,10 @@ public class BillDetails {
 	private int quantity;       //to store the quantity of the product purchased
 	private double totalPrice;  //to store the total price of all the products purchased
 	private Date date;          //to store the date on which bill is generated
-
+	
+	public  BillDetails() {
+		
+	}
 	//toString() method used to return the values of the above mentioned fields:
 	@Override
 	public String toString() {
