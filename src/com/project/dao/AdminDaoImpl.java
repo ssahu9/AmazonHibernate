@@ -43,7 +43,7 @@ public class AdminDaoImpl implements AdminDao {
 		Session session=factory.openSession();
 		Transaction tx=null;
 		tx=session.beginTransaction();
-		session.save(admin);
+		session.saveOrUpdate(admin);
 		tx.commit();
 		session.close();
 		return true;

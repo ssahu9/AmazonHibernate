@@ -1,94 +1,123 @@
 package com.project.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 
 import com.project.bean.Customer;
-import com.project.helper.CreateConnection;
+
 
 public class CustomerDaoImpl implements CustomerDao {
 
 	//private CreateConnection createCon = new CreateConnection();
-	private Connection connection = null;
-	private ResultSet rs = null;
-	private PreparedStatement pstmt = null;
-
+	
+	Configuration cfg=null;
+	private SessionFactory factory=null;
+	public  CustomerDaoImpl() {
+	
+		cfg=new AnnotationConfiguration();
+		cfg.configure("hibernate.cfg.xml");
+		factory=cfg.buildSessionFactory();
+	}
+	
+	
+	
 	//function to insert all customer details in database
 	@Override
-	public int insert(Customer customer) throws ClassNotFoundException, SQLException {
-		connection = CreateConnection.getCon();
-		Statement statement = connection.createStatement();
-		rs = statement.executeQuery("SELECT MAX(CUSTOMER_ID) FROM CUSTOMER_INFO");
-		rs.next();
-		int cId = rs.getInt(1);
-		customer.setCustomerId((cId + 1));
-		pstmt = connection.prepareStatement("INSERT INTO CUSTOMER_INFO VALUES(?,?,?,?,?,?)");
-		pstmt.setInt(1, customer.getCustomerId());
-		pstmt.setString(2, customer.getFirstName());
-		pstmt.setString(3, customer.getLastName());
-		pstmt.setString(4, customer.getEmail());
-		pstmt.setString(5, customer.getPassword());
-		pstmt.setString(6, customer.getPhoneNumber());
-		int row = 0;
-		try {
-			row = pstmt.executeUpdate();
-		} catch (Exception e) {
-			System.out.println(e);
+	public int insert(Customer customer) {
+		Transaction tx=null;
+		Session session=null;
+		
+		try{
+		 session=factory.openSession();
+		 tx=null;
+		tx=session.beginTransaction();
+		session.save(customer);
+		Customer c= (Customer)session.get(Customer.class, customer.getEmail());
+		tx.commit();
+		session.close();
+		return c.getCustomerId();
+		
+		
 		}
-		if (row > 0) {
-			connection.close();
-			return (cId + 1);
-		} else
-			return 0;
+		catch(Exception ex){
+			tx.rollback();
+			return -1;
+		}
+		finally{
+			session.close();
+		}
+		
+		
+		
+		
+		
 
 	}
 
 	
 	//validation function for customer to check email and password
 	@Override
-	public Customer validation(String email, String password) throws ClassNotFoundException, SQLException {
-		connection = CreateConnection.getCon();
-		pstmt = connection.prepareStatement("SELECT* FROM CUSTOMER_INFO WHERE EMAIL=? AND PASSWORD=?");
-		pstmt.setString(1, email);
-		pstmt.setString(2, password);
-		rs = pstmt.executeQuery();
-		rs.next();
-		Customer customer=new Customer();
-		customer.setCustomerId( rs.getInt(1));
-		customer.setFirstName( rs.getString(2));
-		customer.setLastName( rs.getString(3));
-		customer.setEmail( rs.getString(4));
-		customer.setPassword( rs.getString(5));
-		customer.setPhoneNumber( rs.getString(6));
+	public Customer validation(String email, String password)  {
+		Transaction tx=null;
+		Session session=null;
+		Customer customer =null;
+		try{
+	session=factory.openSession();
+	 tx=null;
+		tx=session.beginTransaction();
+		 customer = (Customer)session.get(Customer.class, email);
+		
+	}
+	catch(Exception ex){
+		tx.rollback();
+		return null;
+	}
+	finally{
+		session.close();
+	}
+		if((customer.getEmail()).equalsIgnoreCase(email)&& ((customer.getPassword()).equals(password)))
+				{
+					
+					tx.commit();
+					session.close();
+					return customer;
+					
+				}
+		else return null;
 		
 		
-//		int customerId = rs.getInt(1);
-		connection.close();
-		return customer;
 	}
 
 	
 	//update function for customer to update details 
 	@Override
-	public boolean update(Customer customer) throws ClassNotFoundException, SQLException {
-		connection = CreateConnection.getCon();
-		pstmt = connection.prepareStatement(
-				"UPDATE CUSTOMER_INFO SET FIRST_NAME=?,LAST_NAME=?,PASSWORD=?,PHONE_NUMBER=? WHERE EMAIL=?");
-		pstmt.setString(1, customer.getFirstName());
-		pstmt.setString(2, customer.getLastName());
-		pstmt.setString(3, customer.getPassword());
-		pstmt.setString(4, customer.getPhoneNumber());
-		pstmt.setString(5, customer.getEmail());
-		int row = pstmt.executeUpdate();
-		connection.close();
-		if (row > 0)
-			return true;
-		else
+	public boolean update(Customer customer) {
+		Transaction tx=null;
+		Session session=null;
+		try
+		{
+		 session=factory.openSession();
+		
+		tx=session.beginTransaction();
+		session.saveOrUpdate(customer);
+		tx.commit();
+		session.close();
+		return true;
+	}
+		catch(Exception ex){
+			tx.rollback();
 			return false;
+		}
+		finally{
+			session.close();
+		}
+	
 
 	}
+
+
+
 }
